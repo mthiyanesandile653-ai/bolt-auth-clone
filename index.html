@@ -2,81 +2,43 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#09090b">
-  <title>Bolt · Sign in</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#041321">
+  <meta name="description" content="FSX Global Command Centre — safe browser-based tools for commands, file fingerprints, voice, world data, and discovery.">
+  <title>FSX — Global Command Centre</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <main class="shell">
-    <section class="brand-panel" aria-label="Bolt introduction">
-      <a class="brand" href="/" aria-label="Bolt home">
-        <svg class="bolt-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M17.8 2.5 6.2 17.2h8l-1.1 12.3 12.7-16.8h-8.8l.8-10.2Z" fill="currentColor"/></svg>
-        <span>bolt</span>
-      </a>
-      <div class="brand-copy">
-        <p class="eyebrow">AI-powered development</p>
-        <h1>What will you<br>build today?</h1>
-        <p>Turn ideas into production-ready experiences with one intelligent workspace.</p>
-      </div>
-      <p class="copyright">© 2026 Bolt</p>
+  <div class="scanlines" aria-hidden="true"></div>
+  <main class="app-shell">
+    <header class="topbar">
+      <div class="top-brand"><span class="mini-globe">◎</span> FSX <span class="top-label">COMMAND CENTRE</span></div>
+      <div class="top-actions"><button class="icon-button" id="helpBtn" aria-label="Help" title="Help">?</button><button class="icon-button" id="themeBtn" aria-label="Toggle contrast" title="Toggle contrast">◐</button></div>
+    </header>
+
+    <section class="hero">
+      <div class="clock" id="clock">Loading time…</div>
+      <div class="system-status"><span class="pulse"></span><span id="systemStatus">SYSTEM OPERATIONAL</span></div>
+      <div class="hero-brand"><div class="hero-globe" aria-hidden="true"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="39"/><path d="M11 50h78M50 11c-14 14-14 64 0 78M50 11c14 14 14 64 0 78M20 30c18 11 42 11 60 0M20 70c18-11 42-11 60 0"/></svg></div><div><h1>FSX</h1><p>GLOBAL COMMAND CENTRE</p></div></div>
+      <div class="neon-rule"></div>
+      <p class="motto">EXPLORE <i>•</i> SCAN <i>•</i> DISCOVER <i>•</i> CONTROL</p>
     </section>
 
-    <section class="auth-panel">
-      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle theme">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.64 5.64l1.42 1.42M16.94 16.94l1.42 1.42M18.36 5.64l-1.42 1.42M7.06 16.94l-1.42 1.42"/><circle cx="12" cy="12" r="4"/></svg>
-      </button>
-
-      <div class="auth-card">
-        <h2 id="formTitle">Welcome back</h2>
-        <p class="subtitle" id="formSubtitle">Sign in to continue to Bolt</p>
-
-        <div class="providers">
-          <button class="provider" id="googleBtn" type="button">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.4a4.6 4.6 0 0 1-2 3v2.6h3.2c1.9-1.7 3-4.3 3-7.4Z"/><path fill="#34A853" d="M12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1a5.8 5.8 0 0 1-5.5-4H3.2v2.6A10 10 0 0 0 12 22Z"/><path fill="#FBBC05" d="M6.5 14.1a6 6 0 0 1 0-3.8V7.7H3.2a10 10 0 0 0 0 9.2l3.3-2.8Z"/><path fill="#EA4335" d="M12 6.4c1.5 0 2.8.5 3.9 1.5l2.9-2.9A9.8 9.8 0 0 0 12 2a10 10 0 0 0-8.8 5.7l3.3 2.6A5.8 5.8 0 0 1 12 6.4Z"/></svg>
-            Continue with Google
-          </button>
-          <button class="provider" id="githubBtn" type="button">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.87c-2.78.6-3.37-1.18-3.37-1.18-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.64-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.6 9.6 0 0 1 12 6.82c.85 0 1.71.12 2.51.34 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.86v2.76c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"/></svg>
-            Continue with GitHub
-          </button>
-        </div>
-
-        <div class="divider"><span>or</span></div>
-
-        <form id="authForm" novalidate>
-          <div class="field" id="nameField" hidden>
-            <label for="name">Full name</label>
-            <input id="name" name="name" type="text" autocomplete="name" placeholder="Enter your name">
-          </div>
-          <div class="field">
-            <label for="email">Email</label>
-            <input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
-            <small class="error" id="emailError"></small>
-          </div>
-          <div class="field">
-            <div class="label-row"><label for="password">Password</label><button id="forgotBtn" type="button">Forgot password?</button></div>
-            <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" minlength="8" required>
-            <small class="error" id="passwordError"></small>
-          </div>
-          <button class="submit" id="submitBtn" type="submit">Sign in</button>
-        </form>
-
-        <p class="switch"><span id="switchText">Don’t have an account?</span> <button id="switchBtn" type="button">Sign up</button></p>
-      </div>
+    <section class="tool-grid" aria-label="Command centre tools">
+      <button class="tool-card cyan" data-tool="command"><span class="corner tl"></span><span class="tool-icon terminal-icon">›_</span><strong>Command</strong><small>SAFE APP ACTIONS</small><span class="corner br"></span></button>
+      <button class="tool-card blue" data-tool="scanner"><span class="corner tl"></span><span class="tool-icon scan-icon">⌗</span><strong>Scanner</strong><small>FINGERPRINT A FILE</small><span class="corner br"></span></button>
+      <button class="tool-card teal" data-tool="voice"><span class="corner tl"></span><span class="tool-icon">♩</span><strong>Voice AI</strong><small>SPEAK AND LISTEN</small><span class="corner br"></span></button>
+      <button class="tool-card cyan" data-tool="world"><span class="corner tl"></span><span class="tool-icon"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="38"/><path d="M12 50h76M50 12c-13 12-13 64 0 76M50 12c13 12 13 64 0 76M22 30c17 10 39 10 56 0M22 70c17-10 39-10 56 0"/></svg></span><strong>World</strong><small>LIVE COUNTRY DATA</small><span class="corner br"></span></button>
+      <button class="tool-card blue" data-tool="earth"><span class="corner tl"></span><span class="tool-icon">✧</span><strong>Earth</strong><small>NASA IMAGERY</small><span class="corner br"></span></button>
+      <button class="tool-card teal" data-tool="discovery"><span class="corner tl"></span><span class="tool-icon search-icon">⌕</span><strong>Discovery</strong><small>SEARCH THE WEB</small><span class="corner br"></span></button>
     </section>
+
+    <section class="earth-banner" aria-label="Earth view"><div class="earth-glow"></div><div class="earth-caption"><span>PLANETARY VIEW</span><strong>One world. Infinite things to discover.</strong></div></section>
+    <footer>FSX GLOBAL COMMAND CENTRE <span>•</span> Browser-based tools. No system commands are executed.</footer>
   </main>
 
-  <dialog id="noticeDialog">
-    <form method="dialog">
-      <button class="dialog-close" aria-label="Close">×</button>
-      <div class="dialog-icon" id="dialogIcon">✓</div>
-      <h3 id="dialogTitle">Success</h3>
-      <p id="dialogText"></p>
-      <button class="submit" value="close">Continue</button>
-    </form>
-  </dialog>
-
+  <dialog id="toolDialog" class="tool-dialog"><div class="dialog-head"><div><span class="dialog-kicker">FSX MODULE</span><h2 id="dialogTitle">Command</h2></div><button id="closeDialog" class="close-button" aria-label="Close">×</button></div><div id="dialogBody" class="dialog-body"></div></dialog>
+  <dialog id="helpDialog" class="tool-dialog help-dialog"><div class="dialog-head"><div><span class="dialog-kicker">QUICK GUIDE</span><h2>Safe app commands</h2></div><button class="close-button close-help" aria-label="Close">×</button></div><div class="dialog-body"><p>Commands run only inside this page; they do not execute shell commands or change your device.</p><div class="command-list"><code>help</code><span>Show supported commands</span><code>time</code><span>Show local time and date</span><code>status</code><span>Check app status</span><code>countries</code><span>Load live country data</span><code>search cats</code><span>Search Wikipedia</span><code>clear</code><span>Clear command history</span></div></div></dialog>
   <script src="app.js"></script>
 </body>
 </html>

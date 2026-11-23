@@ -1,101 +1,36 @@
-const form = document.querySelector('#authForm');
-const email = document.querySelector('#email');
-const password = document.querySelector('#password');
-const nameInput = document.querySelector('#name');
-const nameField = document.querySelector('#nameField');
-const submitBtn = document.querySelector('#submitBtn');
-const switchBtn = document.querySelector('#switchBtn');
-const forgotBtn = document.querySelector('#forgotBtn');
-const dialog = document.querySelector('#noticeDialog');
-let signUpMode = false;
-
-function showDialog(title, text, icon = '✓') {
-  document.querySelector('#dialogTitle').textContent = title;
-  document.querySelector('#dialogText').textContent = text;
-  document.querySelector('#dialogIcon').textContent = icon;
-  dialog.showModal();
+const dialog = document.querySelector('#toolDialog');
+const body = document.querySelector('#dialogBody');
+const clock = document.querySelector('#clock');
+const fmt = new Intl.DateTimeFormat(undefined,{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+function tick(){clock.textContent=fmt.format(new Date()).replace(', ', ', ')}
+tick();setInterval(tick,1000);
+const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function open(title,html){document.querySelector('#dialogTitle').textContent=title;body.innerHTML=html;dialog.showModal()}
+document.querySelector('#closeDialog').addEventListener('click',()=>dialog.close());
+document.querySelector('#helpBtn').addEventListener('click',()=>document.querySelector('#helpDialog').showModal());
+document.querySelector('.close-help').addEventListener('click',()=>document.querySelector('#helpDialog').close());
+document.querySelector('#themeBtn').addEventListener('click',()=>document.body.classList.toggle('high-contrast'));
+document.querySelectorAll('[data-tool]').forEach(btn=>btn.addEventListener('click',()=>launch(btn.dataset.tool)));
+function launch(tool){
+ if(tool==='command')return commandPanel();
+ if(tool==='scanner')return scannerPanel();
+ if(tool==='voice')return voicePanel();
+ if(tool==='world')return worldPanel();
+ if(tool==='earth')return earthPanel();
+ if(tool==='discovery')return discoveryPanel();
 }
-
-function setError(input, message) {
-  input.classList.toggle('invalid', Boolean(message));
-  const error = document.querySelector(`#${input.id}Error`);
-  if (error) error.textContent = message;
-}
-
-function validate() {
-  let valid = true;
-  setError(email, '');
-  setError(password, '');
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
-    setError(email, 'Enter a valid email address'); valid = false;
-  }
-  if (password.value.length < 8) {
-    setError(password, 'Password must be at least 8 characters'); valid = false;
-  }
-  if (signUpMode && nameInput.value.trim().length < 2) {
-    showDialog('Name required', 'Please enter your full name.', '!'); return false;
-  }
-  return valid;
-}
-
-switchBtn.addEventListener('click', () => {
-  signUpMode = !signUpMode;
-  nameField.hidden = !signUpMode;
-  document.querySelector('#formTitle').textContent = signUpMode ? 'Create an account' : 'Welcome back';
-  document.querySelector('#formSubtitle').textContent = signUpMode ? 'Start building with Bolt' : 'Sign in to continue to Bolt';
-  submitBtn.textContent = signUpMode ? 'Create account' : 'Sign in';
-  document.querySelector('#switchText').textContent = signUpMode ? 'Already have an account?' : 'Don’t have an account?';
-  switchBtn.textContent = signUpMode ? 'Sign in' : 'Sign up';
-  password.autocomplete = signUpMode ? 'new-password' : 'current-password';
-});
-
-form.addEventListener('submit', event => {
-  event.preventEvent?.();
-  event.preventDefault();
-  if (!validate()) return;
-  submitBtn.disabled = true;
-  submitBtn.textContent = signUpMode ? 'Creating account…' : 'Signing in…';
-  setTimeout(() => {
-    const users = JSON.parse(localStorage.getItem('bolt-users') || '{}');
-    const key = email.value.trim().toLowerCase();
-    if (signUpMode) {
-      if (users[key]) {
-        submitBtn.disabled = false; submitBtn.textContent = 'Create account';
-        showDialog('Account exists', 'An account with this email already exists.', '!'); return;
-      }
-      users[key] = { name: nameInput.value.trim(), password: password.value };
-      localStorage.setItem('bolt-users', JSON.stringify(users));
-      localStorage.setItem('bolt-session', JSON.stringify({ name: nameInput.value.trim(), email: key }));
-      showDialog('Account created', 'Your account is ready. Welcome to Bolt!');
-    } else {
-      const user = users[key];
-      if (!user || user.password !== password.value) {
-        submitBtn.disabled = false; submitBtn.textContent = 'Sign in';
-        showDialog('Unable to sign in', 'The email or password is incorrect.', '!'); return;
-      }
-      localStorage.setItem('bolt-session', JSON.stringify({ name: user.name, email: key }));
-      showDialog('Signed in', `Welcome back, ${user.name}.`);
-    }
-    submitBtn.disabled = false;
-    submitBtn.textContent = signUpMode ? 'Create account' : 'Sign in';
-  }, 700);
-});
-
-forgotBtn.addEventListener('click', () => {
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
-    email.focus(); setError(email, 'Enter your email first'); return;
-  }
-  showDialog('Reset link ready', `A password reset request was created for ${email.value.trim()} in this demo.`);
-});
-
-['google', 'github'].forEach(provider => {
-  document.querySelector(`#${provider}Btn`).addEventListener('click', () => {
-    showDialog(`${provider[0].toUpperCase() + provider.slice(1)} sign-in`, `Add your ${provider} OAuth client credentials to enable live ${provider[0].toUpperCase() + provider.slice(1)} authentication.`, '↗');
-  });
-});
-
-document.querySelector('#themeToggle').addEventListener('click', () => {
-  document.body.classList.toggle('dark');
-  localStorage.setItem('bolt-theme', document.body.classList.contains('dark') ? 'dark' : 'light');
-});
-if (localStorage.getItem('bolt-theme') === 'dark') document.body.classList.add('dark');
+function commandPanel(){open('Command',`<p>Run a supported app action. This safe console never executes shell commands or accesses your device.</p><div class="terminal"><div id="terminalOutput" class="terminal-output">FSX SAFE CONSOLE v1.0\nReady. Type <b>help</b> to see available commands.\n</div><form id="commandForm" class="terminal-line"><span class="prompt">›</span><input id="commandInput" autocomplete="off" placeholder="Type a command…" aria-label="Command"><button>Run</button></form></div><p class="command-hint">Try: <code>help</code>, <code>time</code>, <code>status</code>, <code>countries</code>, <code>search mars</code>, <code>clear</code></p>`);const form=document.querySelector('#commandForm'),input=document.querySelector('#commandInput'),out=document.querySelector('#terminalOutput');form.addEventListener('submit',async e=>{e.preventDefault();const raw=input.value.trim();if(!raw)return;write(`› ${raw}`);input.value='';const [cmd,...args]=raw.split(/\s+/);const arg=args.join(' ');switch(cmd.toLowerCase()){
+ case'help':write('Available: help | time | status | countries | search <words> | clear');break;
+ case'time':write(new Date().toString());break;
+ case'status':write(`FSX UI: operational\nBrowser: ${navigator.userAgent}\nNetwork: ${navigator.onLine?'online':'offline'}\nSecure context: ${window.isSecureContext?'yes':'no'}`);break;
+ case'countries':write('Loading country data…');try{const r=await fetch('https://restcountries.com/v3.1/all?fields=name,cca2,region');if(!r.ok)throw Error('Country service unavailable');const countries=await r.json();write(`Country service reachable: ${countries.length} entries loaded. Open the World tile to browse.`)}catch(err){write(`Could not load country data: ${err.message}`)}break;
+ case'search':if(!arg){write('Usage: search <words>');break}write(`Opening discovery results for “${arg}”…`);discoverySearch(arg);break;
+ case'clear':out.textContent='FSX SAFE CONSOLE v1.0\nHistory cleared.\n';return;
+ default:write(`Unknown command “${cmd}”. Type help for supported commands.`)
+ }});function write(s){const line=document.createElement('div');line.textContent=s;out.append(line);out.scrollTop=out.scrollHeight}}
+function scannerPanel(){open('File fingerprint scanner',`<p>Calculate a SHA-256 fingerprint locally in your browser. The selected file is not uploaded or executed.</p><div class="upload-zone"><strong>Select a file to fingerprint</strong><br><input id="fileInput" type="file"><div id="fileResult" aria-live="polite"></div></div>`);document.querySelector('#fileInput').addEventListener('change',async e=>{const f=e.target.files[0],result=document.querySelector('#fileResult');if(!f)return;result.textContent='Calculating SHA-256…';try{if(!crypto.subtle)throw Error('Secure browser context required (HTTPS or localhost).');const hash=await crypto.subtle.digest('SHA-256',await f.arrayBuffer());const hex=[...new Uint8Array(hash)].map(b=>b.toString(16).padStart(2,'0')).join('');result.innerHTML=`<div class="file-result"><b>${esc(f.name)}</b><p>Size: ${f.size.toLocaleString()} bytes<br>Type: ${esc(f.type||'unknown')}<br>Last modified: ${new Date(f.lastModified).toLocaleString()}</p><p>SHA-256</p><code>${hex}</code></div>`}catch(err){result.textContent=`Fingerprint failed: ${err.message}`}})}
+function voicePanel(){const supported=('SpeechRecognition'in window)||('webkitSpeechRecognition'in window);open('Voice AI',`<p>Use your browser’s speech services. Voice commands are limited to safe app actions such as time, status, help, and search.</p><div class="voice-controls"><button id="listenBtn" class="action-button">🎙 Start listening</button><button id="sayBtn" class="action-button">🔊 Speak a message</button></div><div id="voiceResult" class="voice-result" aria-live="polite">${supported?'Ready. Press start and speak.':'Speech recognition is not available in this browser. You can still try speech playback.'}</div>`);const result=document.querySelector('#voiceResult');document.querySelector('#sayBtn').onclick=()=>{if(!('speechSynthesis'in window)){result.textContent='Speech playback is not supported in this browser.';return}speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance('FSX system operational. Explore, scan, discover, and control.'))};document.querySelector('#listenBtn').onclick=()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){result.textContent='Speech recognition is unsupported here. Try a current Chrome browser with microphone permission.';return}const rec=new SR();rec.lang=navigator.language||'en-US';rec.interimResults=false;result.textContent='Listening… allow microphone access if prompted.';rec.onresult=e=>{const text=e.results[0][0].transcript;result.textContent=`Heard: “${text}”`;const intent=text.toLowerCase();if(intent.includes('time'))result.textContent+=`\n${new Date().toLocaleString()}`;else if(intent.includes('status'))result.textContent+='\nFSX is operational. This page runs safe browser tools only.';else if(intent.includes('help'))result.textContent+='\nAvailable: time, status, help, and search <words>.';else if(intent.startsWith('search ')){result.textContent+='\nSearching…';discoverySearch(text.slice(7))}else result.textContent+='\nTry saying: time, status, help, or search <words>.';if('speechSynthesis'in window)speechSynthesis.speak(new SpeechSynthesisUtterance(result.textContent))};rec.onerror=e=>result.textContent=`Speech error: ${e.error}. Check microphone permissions.`;rec.onend=()=>{};rec.start()}}
+async function worldPanel(){open('World',`<p>Live country information loaded from REST Countries. Data availability depends on your network.</p><div id="worldContent">Loading country data…</div>`);const area=document.querySelector('#worldContent');try{const r=await fetch('https://restcountries.com/v3.1/all?fields=name,cca2,region,population,flags');if(!r.ok)throw Error(`Service returned ${r.status}`);const list=await r.json();const population=list.reduce((sum,c)=>sum+(c.population||0),0);const regions=new Set(list.map(c=>c.region).filter(Boolean)).size;const sorted=list.sort((a,b)=>(a.name?.common||'').localeCompare(b.name?.common||''));area.innerHTML=`<div class="country-stats"><div class="stat"><strong>${list.length}</strong><small>Countries / territories</small></div><div class="stat"><strong>${regions}</strong><small>Regions represented</small></div><div class="stat"><strong>${(population/1e9).toFixed(2)}B</strong><small>Total reported population</small></div></div><label for="countryFilter">Filter countries</label><input id="countryFilter" class="search-form input" style="width:100%;margin:8px 0 14px;padding:11px;background:#061925;color:#dffaff;border:1px solid #1c5872;border-radius:8px" placeholder="Type a country or region"><div id="countryList" class="country-list"></div>`;const filter=document.querySelector('#countryFilter'),container=document.querySelector('#countryList');function render(){const q=filter.value.toLowerCase();container.innerHTML=sorted.filter(c=>(c.name?.common+' '+c.region).toLowerCase().includes(q)).slice(0,100).map(c=>`<div class="country">${c.flags?.svg?`<img src="${esc(c.flags.svg)}" alt="">`:''}<b>${esc(c.name?.common||'Unknown')}</b><br><small>${esc(c.region||'Region unavailable')} · ${Number(c.population||0).toLocaleString()}</small></div>`).join('')||'<p>No matching countries.</p>'}filter.addEventListener('input',render);render()}catch(err){area.innerHTML=`<p class="error-text">Could not load live country data: ${esc(err.message)}. Check your connection and try again.</p><button class="action-button" id="retryWorld">Retry</button>`;document.querySelector('#retryWorld').onclick=worldPanel}}
+async function earthPanel(){open('Earth imagery',`<p>Latest NASA Astronomy Picture of the Day. Image and description come from NASA's public APOD API using its published demo key.</p><div id="earthContent">Loading NASA imagery…</div>`);const area=document.querySelector('#earthContent');try{const r=await fetch('https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY');if(!r.ok)throw Error(`NASA service returned ${r.status}`);const data=await r.json();area.innerHTML=`<h3>${esc(data.title)}</h3><p>${esc(data.date)} · ${esc(data.explanation||'')}</p>${data.media_type==='image'?`<div class="earth-image"><a href="${esc(data.hdurl||data.url)}" target="_blank" rel="noopener"><img src="${esc(data.url)}" alt="${esc(data.title)}"></a></div>`:`<p><a href="${esc(data.url)}" target="_blank" rel="noopener">Open today's NASA media</a></p>`}`}catch(err){area.innerHTML=`<p class="error-text">Could not load NASA imagery: ${esc(err.message)}. The API may be rate-limited; try again shortly.</p><button id="retryEarth" class="action-button">Retry</button>`;document.querySelector('#retryEarth').onclick=earthPanel}}
+function discoveryPanel(){open('Discovery',`<p>Search Wikipedia's public API and open articles in a new tab.</p><form id="searchForm" class="search-form"><input id="searchQuery" placeholder="Search anything…" aria-label="Search query" required><button>Search</button></form><div id="searchResults" class="result-list" aria-live="polite"></div>`);document.querySelector('#searchForm').addEventListener('submit',e=>{e.preventDefault();discoverySearch(document.querySelector('#searchQuery').value)})}
+async function discoverySearch(query){const results=document.querySelector('#searchResults');if(!results)return;results.innerHTML='<p>Searching Wikipedia…</p>';try{const url=`https://en.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(query)}&gsrlimit=8&prop=extracts&exintro=1&explaintext=1&format=json&origin=*`;const r=await fetch(url);if(!r.ok)throw Error(`Search service returned ${r.status}`);const data=await r.json();const pages=Object.values(data.query?.pages||{});results.innerHTML=pages.length?pages.map(p=>`<article class="result-card"><a href="https://en.wikipedia.org/?curid=${encodeURIComponent(p.pageid)}" target="_blank" rel="noopener">${esc(p.title)}</a><p>${esc((p.extract||'No summary available.').slice(0,330))}${(p.extract||'').length>330?'…':''}</p></article>`).join(''):'<p>No results found. Try a broader search.</p>'}catch(err){results.innerHTML=`<p class="error-text">Search failed: ${esc(err.message)}. Check your connection and try again.</p>`}}
